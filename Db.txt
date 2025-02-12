@@ -1,0 +1,58 @@
+To test the code, you need a PostgreSQL database with a sample table that stores text-based documents.
+
+1️⃣ Create a PostgreSQL Database
+
+Login to PostgreSQL
+
+Run the following command in your terminal:
+
+psql -U your_user -d postgres
+
+Replace your_user with your actual PostgreSQL username.
+
+Create the Database
+
+CREATE DATABASE test_db;
+
+Now, connect to the new database:
+
+\c test_db
+
+2️⃣ Create a Table to Store Documents
+
+Run the following SQL command:
+
+CREATE TABLE documents_table (
+    id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL
+);
+
+This table will store text documents that the retriever can query.
+
+3️⃣ Insert Sample Data
+
+INSERT INTO documents_table (content) VALUES 
+('LangChain is an open-source framework for building applications with LLMs.'),
+('FAISS is a library for efficient similarity search and clustering of dense vectors.'),
+('PostgreSQL is an advanced open-source relational database system.'),
+('Vector databases help in semantic search by storing and retrieving embeddings.');
+
+4️⃣ Verify Data
+
+To check if the data is inserted correctly:
+
+SELECT * FROM documents_table;
+
+5️⃣ Update .env File for Connection
+
+If you’re using an .env file, update it with your database credentials:
+
+DB_NAME=test_db
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_HOST=localhost
+DB_PORT=5432
+
+Now, your database is ready for testing with the LangChain retriever code. 🚀
+
+Let me know if you need help setting up a Dockerized PostgreSQL instance for easier testing!
