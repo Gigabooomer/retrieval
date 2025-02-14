@@ -41,3 +41,19 @@ async def main():
 
 # Run in an event loop
 asyncio.run(main())
+import asyncio
+from sqlalchemy.ext.asyncio import create_async_engine
+
+DATABASE_URL = "postgresql+asyncpg://your_user:your_password@127.0.0.1:5432/your_database"
+
+async def test_connection():
+    try:
+        engine = create_async_engine(DATABASE_URL, echo=True)
+        async with engine.connect() as conn:
+            result = await conn.execute("SELECT 1;")
+            print("Database Connected:", result.fetchall())
+    except Exception as e:
+        print("Connection Failed:", e)
+
+asyncio.run(test_connection())
+
