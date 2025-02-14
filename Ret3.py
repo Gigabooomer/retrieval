@@ -57,3 +57,23 @@ async def test_connection():
 
 asyncio.run(test_connection())
 
+import asyncio
+import asyncpg
+import os
+
+async def test_connection():
+    try:
+        conn = await asyncpg.connect(
+            user=os.getenv('DB_USER', 'your_user'),
+            password=os.getenv('DB_PASSWORD', 'your_password'),
+            database=os.getenv('DB_NAME', 'your_database'),
+            host=os.getenv('DB_HOST', '127.0.0.1'),  # Use 127.0.0.1 instead of "localhost"
+            port=os.getenv('DB_PORT', '5432')
+        )
+        print("✅ Connected to database successfully!")
+        await conn.close()
+    except Exception as e:
+        print("❌ Connection failed:", e)
+
+asyncio.run(test_connection())
+
