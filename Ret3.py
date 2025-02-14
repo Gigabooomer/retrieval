@@ -77,3 +77,14 @@ async def test_connection():
 
 asyncio.run(test_connection())
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Construct DATABASE_URL using f-string
+DATABASE_URL = f"postgresql+asyncpg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}" \
+               f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
+
+print(DATABASE_URL)  # Just for verification (remove in production!)
