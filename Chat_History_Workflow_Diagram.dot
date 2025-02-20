@@ -1,0 +1,19 @@
+digraph {
+	Start [label="User Inputs Query" fillcolor=lightblue shape=ellipse style=filled]
+	RetrieveContext [label="Retrieve Context from
+ chat_context & FAISS" fillcolor=lightgray shape=box style=filled]
+	StandaloneQuestion [label="Generate Standalone Question" fillcolor=lightgray shape=box style=filled]
+	QueryFAISS [label="Query FAISS for
+ Relevant Context" fillcolor=lightgray shape=box style=filled]
+	FormatPrompt [label="Format Query with Schema" fillcolor=lightgray shape=box style=filled]
+	LLMResponse [label="Generate Response using LLM" fillcolor=lightgray shape=box style=filled]
+	StoreMemory [label="Store Interaction for Future Use" fillcolor=lightgray shape=box style=filled]
+	End [label="Chatbot Displays Response" fillcolor=lightblue shape=ellipse style=filled]
+	Start -> RetrieveContext
+	RetrieveContext -> StandaloneQuestion
+	StandaloneQuestion -> QueryFAISS
+	QueryFAISS -> FormatPrompt
+	FormatPrompt -> LLMResponse
+	LLMResponse -> StoreMemory
+	StoreMemory -> End
+}
