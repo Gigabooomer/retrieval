@@ -1,0 +1,12 @@
+I found a couple of GitHub repositories that showcase multi-model integration in a LangChain LLM app, which should be very helpful for your project:
+	1.	LLM_ChatBot by aijadugar:
+This project integrates multiple large language models (LLMs) using the LangChain framework. It includes models like OpenAI’s GPT and Hugging Face’s T5 to perform various NLP tasks such as answering questions about world leaders, suggesting travel destinations, and generating synonyms. This repository demonstrates a practical implementation of integrating different models within a single application framework.
+	•	Visit LLM_ChatBot Repository
+	2.	Langchain Chatbots with Multiple LLMs by surabhimali:
+This project demonstrates the creation of chatbots using LangChain, integrating different AI models including OpenAI, Ollama, and Groq. It is deployed using Streamlit and showcases how different models can be handled within a single app to provide various functionalities.
+	•	Visit Langchain Chatbots with Multiple LLMs Repository
+	3.	llm-apps by hasanghaffari93:
+This Streamlit-based application leverages the LangChain framework to interact with multiple LLM providers. It’s a practical example of how to configure and run a multi-model LLM application using LangChain, demonstrating integration with diverse providers.
+	•	Visit llm-apps Repository
+
+These repositories can provide a solid basis for understanding how to structure your application and integrate multiple LLMs using LangChain, each serving different purposes and demonstrating various capabilities of the framework.
