@@ -9,9 +9,13 @@ import ace_tools as tools
 
 def benchmark_model(model_name: str, test_category="nl_to_sql"):
     """Runs benchmark on a locally deployed LLM with real-time GPU monitoring."""
-    llm = get_model(model_name)
     test_cases = get_test_cases(test_category)
 
+    if not test_cases:
+        print(f"⚠️ No test cases found for category '{test_category}'. Using 'general_knowledge' instead.")
+        test_cases = get_test_cases("general_knowledge")
+
+    llm = get_model(model_name)
     results = []
 
     for case in test_cases:
@@ -58,4 +62,4 @@ def benchmark_model(model_name: str, test_category="nl_to_sql"):
 
 # Run benchmark
 if __name__ == "__main__":
-    benchmark_model("mistral-7b", "nl_to_sql")
+    benchmark_model("mistral-7b", "general_knowledge")
