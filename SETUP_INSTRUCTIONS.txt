@@ -1,0 +1,95 @@
+# Setup Instructions for GPUstack Model Deployment
+
+## 1️⃣ Update `.env` File with Your Credentials
+Before running any script, **edit the `.env` file** and replace the placeholders with your actual credentials.
+
+**Open `.env` and modify:**
+```
+SSH_USER=your_username                 # Your GPUstack server username
+SSH_SERVER_IP=your_gpu_stack_server_ip # Your GPUstack server IP address
+SSH_PRIVATE_KEY=your_private_key.pem   # Path to your SSH private key
+
+MODEL_NAME=DeeSeek/deeseek-r1-distill-qwen-7b  # Model ID (Change if using another model)
+MODEL_PORT=8000                                # Port where the model will be served
+```
+
+## 2️⃣ Upload Your SSH Key to Your Local Machine
+If your SSH key is not already on your local machine, move it there and make sure it has the correct permissions:
+```bash
+chmod 600 your_private_key.pem
+```
+
+## 3️⃣ Deploy the Model on Your GPUstack Server
+Run the following command from your **local machine** to SSH into your server and deploy the model:
+```bash
+python3 deploy_and_connect.py
+```
+✅ This will:
+- **Connect to your remote GPUstack server**
+- **Deploy the model using vLLM**
+- **Set up SSH tunneling so you can access it locally**
+
+## 4️⃣ Verify the Model Deployment
+Check if the model is running by executing:
+```bash
+curl http://localhost:8000/generate -X POST -H "Content-Type: application/json" -d '{"model": "DeeSeek/deeseek-r1-distill-qwen-7b", "prompt": "Hello, how are you?", "max_tokens": 50}'
+```
+
+If the model is running correctly, you should see a JSON response with the generated text.
+
+## 5️⃣ Run LangChain with Your Model
+If deployment is successful, you can now **run the LangChain app** that interacts with the model:
+```bash
+python3 langchain_app.py
+```
+✅ This will:
+- Send a **prompt to the model** via LangChain
+- Print the **model's response** in the terminal
+
+## 6️⃣ Run Performance Test for Latency & Tokens/sec
+To benchmark the model’s speed and response time, run:
+```bash
+python3 test_model.py
+```
+✅ This will:
+- Measure **response latency (in seconds)**
+- Calculate **tokens per second (throughput)**
+- Display a **summary table of performance**
+
+## 7️⃣ Troubleshooting
+### ❌ **Problem: SSH Connection Fails**
+- Double-check the SSH credentials in `.env`.
+- Run:
+  ```bash
+  ssh -i your_private_key.pem user@your_gpu_stack_server_ip
+  ```
+  If this fails, the issue is with your **SSH connection**.
+
+### ❌ **Problem: Model Not Responding**
+- Ensure the deployment is **running on the server**:
+  ```bash
+  ps aux | grep vllm
+  ```
+- If the process is missing, restart the deployment:
+  ```bash
+  python3 deploy_and_connect.py
+  ```
+
+### ❌ **Problem: "Connection Refused" in Test Script**
+- Make sure SSH tunneling is active by running:
+  ```bash
+  ssh -i your_private_key.pem -L 8000:localhost:8000 user@your_gpu_stack_server_ip
+  ```
+- Then retry:
+  ```bash
+  python3 test_model.py
+  ```
+
+## ✅ **You're All Set!**
+Now you have:
+1. **A deployed AI model on GPUstack**
+2. **A secure SSH tunnel for local access**
+3. **A LangChain app that interacts with the model**
+4. **A test script to benchmark performance**
+
+Happy coding! 🚀
