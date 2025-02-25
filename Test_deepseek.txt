@@ -1,0 +1,140 @@
+Yes, you can run this script inside your GPUstack container, as long as the container has Python installed and DeepSeek is running.
+
+1️⃣ Check If Python Is Installed Inside the Container
+
+Run the following inside the container:
+
+python3 --version
+
+If Python is not installed, install it:
+
+apt update && apt install python3 python3-pip -y  # For Debian/Ubuntu
+
+or
+
+yum install python3 python3-pip -y  # For CentOS/RHEL
+
+2️⃣ Install Required Dependencies
+
+Inside the container, run:
+
+pip install requests pandas
+
+This installs the required libraries for the script.
+
+3️⃣ Create the Test Script in the Container
+
+Inside the container, create the file:
+
+cat > deepseek_test.py
+
+Then paste the script below and press CTRL+D to save.
+
+import requests
+import time
+import pandas as pd
+
+# Set the API URL for the deployed DeepSeek model
+API_URL = "http://localhost:8500/generate"  # Change if running on a remote server
+
+# Define test prompts
+test_prompts = [
+    "Tell me a joke about AI.",
+    "What is the meaning of life?",
+    "Explain quantum computing in simple terms.",
+    "Write a short poem about the future of technology.",
+    "Summarize the benefits of AI in healthcare."
+]
+
+# Define max tokens for each test
+MAX_TOKENS = 100
+
+# Test Results Storage
+results = []
+
+# Start testing
+print("Running inference test on DeepSeek model...\n")
+
+for prompt in test_prompts:
+    payload = {
+        "prompt": prompt,
+        "max_tokens": MAX_TOKENS
+    }
+
+    try:
+        print(f"Testing prompt: \"{prompt[:30]}...\"")
+
+        start_time = time.time()
+        response = requests.post(API_URL, json=payload, headers={"Content-Type": "application/json"})
+        end_time = time.time()
+
+        latency = round(end_time - start_time, 3)
+
+        if response.status_code == 200:
+            result = response.json()
+            generated_text = result.get("response", "").strip()
+            generated_tokens = len(generated_text.split())  # Approximate token count
+            tokens_per_sec = generated_tokens / latency if latency > 0 else 0
+
+            results.append({
+                "prompt": prompt,
+                "latency (s)": latency,
+                "generated tokens": generated_tokens,
+                "tokens/sec": round(tokens_per_sec, 2)
+            })
+
+            print(f"Response received in {latency}s | Tokens: {generated_tokens} | Speed: {round(tokens_per_sec, 2)} tokens/sec\n")
+            print(f"Model Response: {generated_text}\n")
+
+        else:
+            print(f"Test Failed! Error {response.status_code}: {response.text}\n")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Model Test Failed! Could not reach the API.\nError: {str(e)}\n")
+
+# Print test summary
+df = pd.DataFrame(results)
+print("\nTest Summary:")
+print(df)
+
+4️⃣ Run the Test Inside the Container
+
+Now, inside the container, run:
+
+python3 deepseek_test.py
+
+This will:
+	•	Send test prompts to DeepSeek.
+	•	Measure latency and tokens/sec.
+	•	Print results in the console.
+
+5️⃣ (Optional) Run the Test from Outside the Container
+
+If you want to run the test from your local machine, ensure that port 8500 is mapped when starting the container:
+
+Check if Port 8500 is Mapped
+
+Run:
+
+docker ps
+
+If you do not see 0.0.0.0:8500->8500/tcp, restart the container with:
+
+docker stop <container_id>
+docker run --gpus all -d -p 8500:8500 --name <container_name> <container_image>
+
+Now, you can run the test script from your local machine by changing:
+
+API_URL = "http://your_gpu_stack_server_ip:8500/generate"
+
+and running:
+
+python3 deepseek_test.py
+
+📌 Summary
+
+1️⃣ Run the test inside the container (install dependencies, create the script, and run it).
+2️⃣ If testing from outside, make sure port 8500 is mapped.
+3️⃣ Run the test script and check results in the console.
+
+Now you can test DeepSeek inside your GPUstack container or from your local machine. Let me know if you need any modifications! 🚀
