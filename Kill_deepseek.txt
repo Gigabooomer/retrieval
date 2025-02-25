@@ -1,0 +1,116 @@
+If the PID keeps changing, it means that DeepSeek is being restarted automatically or running in a looping process manager like supervisord, systemd, or Docker restart policies. Here’s how to forcefully stop it permanently:
+
+1️⃣ Kill All Python Processes (Extreme Force)
+
+If DeepSeek keeps restarting under different PIDs, stop all Python processes inside the container:
+
+pkill -9 python3
+
+or:
+
+kill -9 $(ps aux | grep 'python3' | grep -v grep | awk '{print $2}')
+
+🚨 Warning: This will stop all Python processes, including any other scripts running inside the container.
+
+2️⃣ Check If It’s Running Under systemd or supervisord
+
+Check for a systemd Service
+
+Run:
+
+systemctl list-units --type=service | grep deepseek
+
+If you see something like:
+
+deepseek.service   loaded active running   DeepSeek Model Server
+
+Then stop it:
+
+systemctl stop deepseek.service
+systemctl disable deepseek.service
+
+Check for a supervisord Process
+
+Run:
+
+supervisorctl status
+
+If DeepSeek appears, stop it with:
+
+supervisorctl stop deepseek
+
+3️⃣ If Running as a Docker Process, Stop the Container
+
+If DeepSeek was started inside a Docker container that automatically restarts, find the container running on port 8500:
+
+docker ps | grep 8500
+
+Then stop and remove the container:
+
+docker stop <container_id>
+docker rm <container_id>
+
+To prevent auto-restart, ensure it wasn’t started with a --restart flag. If it was, recreate the container without auto-restart:
+
+docker run --gpus all -d -p 8500:8500 --name deepseek-container deepseek-image
+
+4️⃣ If Running as a nohup or screen Process
+
+Kill the Background nohup Process
+
+Find and kill the process manually:
+
+ps aux | grep deepseek_server.py
+
+If you see a process like:
+
+root     12345  0.5  2.0 python3 deepseek_server.py
+
+Kill it:
+
+kill -9 12345
+
+If it was started with nohup, find and kill all nohup processes:
+
+ps aux | grep nohup
+kill -9 <PID>
+
+Stop a Running screen Session
+
+List all screen sessions:
+
+screen -ls
+
+If DeepSeek is running inside, stop it:
+
+screen -XS deepseek quit
+
+Stop a Running tmux Session
+
+List all tmux sessions:
+
+tmux ls
+
+Stop DeepSeek inside:
+
+tmux kill-session -t deepseek
+
+5️⃣ If Nothing Works, Restart the Whole Machine
+
+If DeepSeek keeps restarting even after stopping all processes, you may need to restart the entire server:
+
+reboot
+
+If using Docker:
+
+docker restart <container_id>
+
+📌 Summary
+
+1️⃣ Kill all Python processes: pkill -9 python3
+2️⃣ Check if it’s running under systemd or supervisord and stop it.
+3️⃣ If running in Docker, stop the container: docker stop <container_id>
+4️⃣ If running with nohup or screen, manually kill the process.
+5️⃣ If nothing works, restart the server or container.
+
+Now try these steps and let me know if DeepSeek finally stops! 🚀
