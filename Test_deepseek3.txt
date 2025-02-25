@@ -1,0 +1,109 @@
+When you run deepseek_server.py directly, it blocks the terminal because it runs an active FastAPI server. Here are ways to run DeepSeek in the background while keeping terminal access.
+
+1️⃣ Run DeepSeek in the Background Using nohup
+
+This method keeps DeepSeek running even after you close the terminal.
+
+Run:
+
+nohup python3 deepseek_server.py > deepseek.log 2>&1 &
+
+	•	nohup ensures the process does not stop when you exit the session.
+	•	The output is saved in deepseek.log, so you can check for errors if needed.
+	•	The & at the end runs it in background mode.
+
+✅ Now, you can use the terminal while DeepSeek runs in the background.
+
+To check if DeepSeek is running, use:
+
+ps aux | grep deepseek_server.py
+
+If you see an entry like:
+
+root     12345  0.5  2.0 python3 deepseek_server.py
+
+then DeepSeek is running.
+
+2️⃣ Use screen to Keep DeepSeek Running
+
+If nohup does not work, try using screen:
+	1.	Start a new session:
+
+screen -S deepseek
+
+
+	2.	Run DeepSeek:
+
+python3 deepseek_server.py
+
+
+	3.	Detach from the session (so it runs in the background):
+Press CTRL + A, then D.
+
+Now you can close the terminal, and DeepSeek will keep running.
+
+To reconnect to DeepSeek, use:
+
+screen -r deepseek
+
+To stop DeepSeek, use:
+
+CTRL + C
+
+or:
+
+pkill -f deepseek_server.py
+
+3️⃣ Use tmux (Alternative to screen)
+
+If screen is not installed, try tmux:
+	1.	Start a new session:
+
+tmux new -s deepseek
+
+
+	2.	Run DeepSeek:
+
+python3 deepseek_server.py
+
+
+	3.	Detach from the session:
+Press CTRL + B, then D.
+
+To reconnect:
+
+tmux attach -t deepseek
+
+4️⃣ If DeepSeek is Already Running and Blocking the Terminal
+	•	Stop the process using CTRL + C.
+	•	Run it again using nohup, screen, or tmux.
+
+📌 Summary
+
+1️⃣ Best method: Run DeepSeek in the background with nohup:
+
+nohup python3 deepseek_server.py > deepseek.log 2>&1 &
+
+2️⃣ Use screen if nohup doesn’t work:
+
+screen -S deepseek
+python3 deepseek_server.py
+
+Detach with CTRL + A, then D.
+
+3️⃣ Use tmux if screen is unavailable:
+
+tmux new -s deepseek
+python3 deepseek_server.py
+
+Detach with CTRL + B, then D.
+
+4️⃣ Check if it’s running with:
+
+ps aux | grep deepseek_server.py
+
+5️⃣ Stop DeepSeek if needed:
+
+pkill -f deepseek_server.py
+
+✅ Now, DeepSeek runs in the background, and you have full terminal access! Let me know if you need further help. 🚀
